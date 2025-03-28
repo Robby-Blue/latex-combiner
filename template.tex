@@ -1,0 +1,28 @@
+\documentclass{article}
+
+\$package_imports\$
+
+\newcommand{\documentsection}[1]{
+    \vspace{0.1\baselineskip}
+    \subsubsection{#1}
+}
+
+\newcommand{\documentsubsection}[1]{
+    \vspace{0.3\baselineskip}
+    \subsubsection*{#1}
+}
+
+\begin{document}
+
+\title{\$title\$} 
+\author{\$author\$}
+\date{\$date\$}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\$contents\$
+
+\end{document}
