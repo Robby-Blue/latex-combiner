@@ -21,8 +21,7 @@ def parse_scope(tokens, index=0, indent_level=0, spaces_per_indent=None):
             elif keyword == "USE":
                 node, index = parse_use_statement(tokens, index)
             elif keyword == "SECTION":
-                # set spaces per indent here later
-                node, index = parse_section_statement(tokens, index, indent_level, spaces_per_indent)
+                node, index, spaces_per_indent = parse_section_statement(tokens, index, indent_level, spaces_per_indent)
             elif keyword == "INCLUDE":
                 pass
             ast.append(node)
@@ -92,7 +91,7 @@ def parse_section_statement(tokens, index, indent_level, spaces_per_indent):
         "type": "use_statement",
         "name": name_token["text"],
         "contents": section_ast
-    }, index
+    }, index, spaces_per_indent
 
 def read_keyword(expected_texts, tokens, index):
     _, index = read_spaces(tokens, index)
