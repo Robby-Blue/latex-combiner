@@ -1,15 +1,15 @@
+import sys
 import os
 import hashlib
+
 import doc_rewriter
+import language
 
 title = "Example Document"
 author = "John Doe"
 date = "Today"
 
-documents = [
-    "funktionen/main.tex",
-    "vektoren/main.tex"
-]
+documents = []
 
 def rewrite_doc(doc_path):
     input_file = os.path.join("input", doc_path)
@@ -76,5 +76,8 @@ def rewrite_main(doc_file_names, packages):
     with open("output/main.tex", "w") as f:
         f.write(src)
 
-doc_file_names, packages = rewrite_docs()
-rewrite_main(doc_file_names, packages)
+structure_file = sys.argv[1]
+language.parse_file(structure_file)
+
+# doc_file_names, packages = rewrite_docs()
+# rewrite_main(doc_file_names, packages)
