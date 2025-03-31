@@ -1,8 +1,9 @@
 def rewrite_document(src):
-    src, packages = find_and_remove_packages(src)
-    src = fix_sections(src)
     src = remove_commands(src, [r"\documentclass{article}",
         r"\begin{document}", r"\end{document}"])
+    src, packages = find_and_remove_packages(src)
+    src = fix_sections(src)
+    src = undefine_custom_commands(src)
 
     return src, packages
 
@@ -24,6 +25,15 @@ def find_and_remove_packages(src):
         offset += offset_change
 
     return src, packages
+
+def undefine_custom_commands(src):
+    indexed_commands = find_indexed_commands(src, ["newcommand"])
+    for index, _ in indexed_commands:
+        command = src[src.index("{", index)+1:src.index("}", index)]
+
+        src += fr"\let{command}\undefined"
+    
+    return src
 
 def parse_package(src):
     name_start_index = src.index("{")

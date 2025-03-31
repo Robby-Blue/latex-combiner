@@ -5,41 +5,31 @@ import hashlib
 import doc_rewriter
 import language
 
-title = "Example Document"
-author = "John Doe"
-date = "Today"
-
-documents = []
-
 def rewrite_doc(doc_path):
-    input_file = os.path.join("input", doc_path)
-
-    md5_hash = hashlib.md5(doc_path.encode("UTF8")).hexdigest()
+    md5_hash = hash_path(doc_path)
     file_name = f"{md5_hash}.tex"
     output_file = os.path.join("output", file_name)
 
-    with open(input_file, "r") as f:
+    with open(doc_path, "r") as f:
         src = f.read()
 
     # if this becomes too slow make a package cache to read from
     output_src, packages = doc_rewriter.rewrite_document(src)
 
     if (os.path.exists(output_file) and
-            os.path.getmtime(input_file) > os.path.getmtime(output_file)):
-        return md5_hash, packages
+            os.path.getmtime(doc_path) > os.path.getmtime(output_file)):
+        return packages
 
     with open(output_file, "w") as f:
         f.write(output_src)
 
-    return md5_hash, packages
+    return packages
 
-def rewrite_docs():
-    doc_file_names = []
+def rewrite_docs(documents):
     total_packages = {}
 
-    for document in documents:
-        name, packages = rewrite_doc(document)
-        doc_file_names.append(name)
+    for document_path in documents:
+        packages = rewrite_doc(document_path)
 
         for package in packages:
             name = package["name"]
@@ -51,16 +41,16 @@ def rewrite_docs():
             else:
                 total_packages[name] = line
 
-    return doc_file_names, total_packages
+    return total_packages
 
-def rewrite_main(doc_file_names, packages):
+def rewrite_main(packages, variables):
     dir = os.path.dirname(__file__)
     with open(os.path.join(dir, "template.tex")) as f:
         src = f.read()
 
-    src = src.replace("\$title\$", title)
-    src = src.replace("\$author\$", author)
-    src = src.replace("\$date\$", date)
+    src = src.replace("\$title\$", variables.get("TITLE", ""))
+    src = src.replace("\$author\$", variables.get("AUTHOR", ""))
+    src = src.replace("\$date\$", variables.get("DATE", ""))
 
     package_imports = ""
     for package_line in packages.values():
@@ -69,15 +59,30 @@ def rewrite_main(doc_file_names, packages):
     src = src.replace("\$package_imports\$", package_imports)
 
     contents = ""
-    for file_name in doc_file_names:
-        contents += "\include{"+file_name+"}\n"
+    section_types = ["section", "subsection", "subsubsection"]
+    for node in structure:
+        if node["type"] == "section":
+            section_type = section_types[node["nest"]]
+            text = node["text"]
+            contents += "\\"+section_type+"{"+text+"}\n"
+        if node["type"] == "doc":
+            hash = hash_path(node["path"])
+            contents += "\include{"+hash+"}\n"
     src = src.replace("\$contents\$", contents)
 
     with open("output/main.tex", "w") as f:
         f.write(src)
 
-structure_file = sys.argv[1]
-language.parse_file(structure_file)
+def hash_path(path):
+    return hashlib.md5(path.encode("UTF8")).hexdigest()
 
-# doc_file_names, packages = rewrite_docs()
-# rewrite_main(doc_file_names, packages)
+structure_file = sys.argv[1]
+res = language.parse_file(structure_file)
+
+structure = res["structure"]
+variables = res["variables"]
+
+documents = [node["path"] for node in structure if node["type"] == "doc"]
+
+packages = rewrite_docs(documents)
+rewrite_main(packages, variables)

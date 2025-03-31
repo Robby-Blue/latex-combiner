@@ -35,15 +35,16 @@ def compile_structure(ast, base_path="", nest_level=0):
             structure += section["structure"]
             required_docs.update(section["required_docs"])
         elif statement_type == "include_statement":
-            doc_path = os.path.join(cwd, statement["path"])
+            doc_folder_path = os.path.join(cwd, statement["path"])
+            doc_path = os.path.join(doc_folder_path, "main.tex")
             if not os.path.exists(doc_path):
                 raise ParserError("path doesnt exist")
             structure.append({
                 "type": "doc",
-                "text": doc_path,
+                "path": doc_path,
                 "nest": nest_level
             })
-            required_docs.remove(doc_path)
+            required_docs.remove(doc_folder_path)
 
     if required_docs:
         raise ParserError("required doc not used")
