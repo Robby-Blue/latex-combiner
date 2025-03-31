@@ -23,7 +23,7 @@ def parse_scope(tokens, index=0, indent_level=0, spaces_per_indent=None):
             elif keyword == "SECTION":
                 node, index, spaces_per_indent = parse_section_statement(tokens, index, indent_level, spaces_per_indent)
             elif keyword == "INCLUDE":
-                pass
+                node, index = parse_include_statement(tokens, index)
             ast.append(node)
         if token["type"] == "newline":
             count, index = read_spaces(tokens, index+1)
@@ -92,6 +92,18 @@ def parse_section_statement(tokens, index, indent_level, spaces_per_indent):
         "name": name_token["text"],
         "contents": section_ast
     }, index, spaces_per_indent
+
+def parse_include_statement(tokens, index):
+    _, index = read_keyword(["INCLUDE"], tokens, index)
+    _, index = read_spaces(tokens, index)
+
+    path_token, index = read_token(["identifier"], tokens, index)
+    _, index = read_spaces(tokens, index)
+
+    return {
+        "type": "include_statement",
+        "path": path_token["text"]
+    }, index
 
 def read_keyword(expected_texts, tokens, index):
     _, index = read_spaces(tokens, index)
