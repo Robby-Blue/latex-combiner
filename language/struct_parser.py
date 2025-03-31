@@ -1,11 +1,9 @@
 from language.parser_error import ParserError
-import json
 
 def parse_structure(tokens):
-    print(json.dumps(tokens, indent=2))
     ast , _ = parse_scope(tokens)
 
-    print(json.dumps(ast, indent=2))
+    return ast
 
 def parse_scope(tokens, index=0, indent_level=0, spaces_per_indent=None):
     ast = []
@@ -97,7 +95,7 @@ def parse_section_statement(tokens, index, indent_level, spaces_per_indent):
     section_ast, index = parse_scope(tokens, index, indent_level + 1, spaces_per_indent)
 
     return {
-        "type": "use_statement",
+        "type": "section_statement",
         "name": name_token["text"],
         "contents": section_ast
     }, index, spaces_per_indent
