@@ -5,7 +5,8 @@ keywords = [
     "DATE",
     "USE",
     "SECTION",
-    "INCLUDE"
+    "INCLUDE",
+    "STRICT"
 ]
 
 def tokenize_structure(src):

@@ -68,9 +68,18 @@ def parse_use_statement(tokens, index):
     path_token, index = read_token(["identifier"], tokens, index)
     _, index = read_spaces(tokens, index)
 
+    is_strict = False
+
+    next_token = tokens[index]
+    if next_token["type"] == "keyword":
+        _, index = read_keyword(["STRICT"], tokens, index)
+        _, index = read_spaces(tokens, index)
+        is_strict = True
+
     return {
         "type": "use_statement",
-        "path": path_token["text"]
+        "path": path_token["text"],
+        "is_strict": is_strict
     }, index
 
 def parse_section_statement(tokens, index, indent_level, spaces_per_indent):
