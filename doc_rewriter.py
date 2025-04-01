@@ -88,9 +88,9 @@ def replace_text(new_text, start_index, length, src):
     return src, len(new_text) - length
 
 def get_replacement_command(src, index, command):
-    if command == "section":
+    if command in ["section", "section*"]:
         return "documentsection"
-    if command == "subsection":
+    if command in ["subsection", "subsection*"]:
         return "documentsubsection"
 
 def find_indexed_commands(src, commands):
@@ -108,7 +108,7 @@ def find_indexed_commands(src, commands):
                 command_index = src.index(effective_command, index+1)
                 if found_index is None or command_index < found_index:
                     found_index = command_index
-                    found_command = command
+                    found_command = command + suffix[:-1]
 
         if found_index is None:
             break
