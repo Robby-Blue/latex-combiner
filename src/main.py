@@ -48,27 +48,34 @@ def rewrite_main(packages, variables):
     with open(os.path.join(dir, "template.tex")) as f:
         src = f.read()
 
-    src = src.replace("\$title\$", variables.get("TITLE", ""))
-    src = src.replace("\$author\$", variables.get("AUTHOR", ""))
-    src = src.replace("\$date\$", variables.get("DATE", ""))
+    src = src.replace("\\$title\\$", variables.get("TITLE", ""))
+    src = src.replace("\\$author\\$", variables.get("AUTHOR", ""))
+    src = src.replace("\\$date\\$", variables.get("DATE", ""))
 
     package_imports = ""
     for package_line in packages.values():
         package_imports += f"{package_line}\n"
 
-    src = src.replace("\$package_imports\$", package_imports)
+    src = src.replace("\\$package_imports\\$", package_imports)
 
+    last_nest = 0
     contents = ""
     section_types = ["section", "subsection", "subsubsection"]
     for node in structure:
         if node["type"] == "section":
+            nest = node["nest"]
             section_type = section_types[node["nest"]]
             text = node["text"]
+            if nest <= last_nest:
+                contents += "\\newpage\n"
             contents += "\\"+section_type+"{"+text+"}\n"
+            last_nest = nest
         if node["type"] == "doc":
             hash = hash_path(node["path"])
-            contents += "\include{"+hash+"}\n"
-    src = src.replace("\$contents\$", contents)
+            contents += "\input{"+hash+"}\n"
+        
+
+    src = src.replace("\\$contents\\$", contents)
 
     with open("output/main.tex", "w") as f:
         f.write(src)
