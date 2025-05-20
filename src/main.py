@@ -5,7 +5,7 @@ import hashlib
 import doc_rewriter
 import language
 
-def rewrite_doc(doc_path):
+def rewrite_doc(doc_path, nest):
     md5_hash = hash_path(doc_path)
     file_name = f"{md5_hash}.tex"
     output_file = os.path.join("output", file_name)
@@ -14,7 +14,7 @@ def rewrite_doc(doc_path):
         src = f.read()
 
     # if this becomes too slow make a package cache to read from
-    output_src, packages = doc_rewriter.rewrite_document(src)
+    output_src, packages = doc_rewriter.rewrite_document(src, nest)
 
     if (os.path.exists(output_file) and
             os.path.getmtime(doc_path) > os.path.getmtime(output_file)):
@@ -28,8 +28,11 @@ def rewrite_doc(doc_path):
 def rewrite_docs(documents):
     total_packages = {}
 
-    for document_path in documents:
-        packages = rewrite_doc(document_path)
+    for document in documents:
+        document_path = document["path"]
+        nest = document["nest"]
+        print(nest)
+        packages = rewrite_doc(document_path, nest)
 
         for package in packages:
             name = package["name"]
@@ -96,7 +99,7 @@ res = language.parse_file(structure_file)
 structure = res["structure"]
 variables = res["variables"]
 
-documents = [node["path"] for node in structure if node["type"] == "doc"]
+documents = [node for node in structure if node["type"] == "doc"]
 
 packages = rewrite_docs(documents)
 rewrite_main(packages, variables)

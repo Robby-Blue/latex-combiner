@@ -1,4 +1,4 @@
-def rewrite_document(src):
+def rewrite_document(src, nest):
     # makes it not put equations into the page numbers
     # without breaking wrapfig
     src = src.replace("\\[", "\\vspace{0pt}\\[")
@@ -6,7 +6,7 @@ def rewrite_document(src):
     src = remove_commands(src, [r"\documentclass{article}",
         r"\begin{document}", r"\end{document}"])
     src, packages = find_and_remove_packages(src)
-    src = fix_sections(src)
+    src = fix_sections(src, nest)
     src = undefine_custom_commands(src)
 
     return src, packages
@@ -49,7 +49,7 @@ def parse_package(src):
         "line": src.strip()
     }
 
-def fix_sections(src):
+def fix_sections(src, nest):
     """
     moves section hierarchy down by two levels
     because theres expected to be two levels of documents
@@ -67,7 +67,7 @@ def fix_sections(src):
         index += offset
         command_length = len(command)
 
-        replacement_command = get_replacement_command(src, index, command)
+        replacement_command = get_replacement_command(command, nest)
 
         new_command_call = f"\n\\{replacement_command}"
         src, offset_change = replace_text(new_command_call,
@@ -91,11 +91,13 @@ def replace_text(new_text, start_index, length, src):
     
     return src, len(new_text) - length
 
-def get_replacement_command(src, index, command):
+def get_replacement_command(command, nest):
     if command in ["section", "section*"]:
-        return "documentsection"
+        level = 0
     if command in ["subsection", "subsection*"]:
-        return "documentsubsection"
+        level = 1
+    level += nest
+    return "document"+"sub"*level+"section"
 
 def find_indexed_commands(src, commands):
     found_commands = []
