@@ -3,6 +3,7 @@ keywords = [
     "TITLE",
     "AUTHOR",
     "DATE",
+    "TOC",
     "USE",
     "SECTION",
     "INCLUDE",

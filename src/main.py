@@ -52,6 +52,14 @@ def rewrite_main(packages, variables):
     src = src.replace("\\$author\\$", variables.get("AUTHOR", ""))
     src = src.replace("\\$date\\$", variables.get("DATE", ""))
 
+    has_title = bool(variables.get("TITLE", ""))
+    startpage_code = "\\maketitle" if has_title else ""
+    src = src.replace("\\$maketitle\\$", startpage_code)
+
+    has_toc = variables.get("TOC", "false") == "true"
+    startpage_code = "\\tableofcontents" if has_toc else ""
+    src = src.replace("\\$toc\\$", startpage_code)
+
     package_imports = ""
     for package_line in packages.values():
         package_imports += f"{package_line}\n"
@@ -72,8 +80,7 @@ def rewrite_main(packages, variables):
             last_nest = nest
         if node["type"] == "doc":
             hash = hash_path(node["path"])
-            contents += "\input{"+hash+"}\n"
-        
+            contents += "\\input{"+hash+"}\n"
 
     src = src.replace("\\$contents\\$", contents)
 

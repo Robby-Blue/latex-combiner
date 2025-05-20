@@ -47,7 +47,7 @@ def parse_set_statement(tokens, index):
     _, index = read_keyword(["SET"], tokens, index)
     _, index = read_spaces(tokens, index)
 
-    key_token, index = read_keyword(["TITLE", "AUTHOR", "DATE"], tokens, index)
+    key_token, index = read_keyword(["TITLE", "AUTHOR", "DATE", "TOC"], tokens, index)
     _, index = read_spaces(tokens, index)
 
     value_token, index = read_token(["literal"], tokens, index)

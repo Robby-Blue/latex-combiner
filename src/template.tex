@@ -3,11 +3,19 @@
 \$package_imports\$
 
 \newcommand{\documentsection}[1]{
+    \section{#1}
+}
+
+\newcommand{\documentsubsection}[1]{
+    \subsection{#1}
+}
+
+\newcommand{\documentsubsubsection}[1]{
     \vspace{0.1\baselineskip}
     \subsubsection{#1}
 }
 
-\newcommand{\documentsubsection}[1]{
+\newcommand{\documentsubsubsubsection}[1]{
     \vspace{0.3\baselineskip}
     \subsubsection*{#1}
 }
@@ -18,10 +26,8 @@
 \author{\$author\$}
 \date{\$date\$}
 
-\maketitle
-
-\tableofcontents
-
+\$maketitle\$
+\$toc\$
 \$contents\$
 
 \end{document}
