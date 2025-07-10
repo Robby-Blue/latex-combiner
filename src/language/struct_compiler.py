@@ -13,7 +13,8 @@ def compile_structure(ast, base_path="", nest_level=0):
         statement_type = statement["type"]
         if statement_type == "set_statement":
             if statement["key"] in variables:
-                raise ParserError("doubled variables")
+                var_name = statement["key"]
+                raise ParserError(f"doubled variables '{var_name}'")
             if nest_level != 0:
                 raise ParserError("variables must be at top level")
             variables[statement["key"]] = statement["value"]
@@ -38,7 +39,7 @@ def compile_structure(ast, base_path="", nest_level=0):
             doc_folder_path = os.path.join(cwd, statement["path"])
             doc_path = os.path.join(doc_folder_path, "main.tex")
             if not os.path.exists(doc_path):
-                raise ParserError("path doesnt exist")
+                raise ParserError(f"path {doc_folder_path} doesnt exist")
             structure.append({
                 "type": "doc",
                 "path": doc_path,
@@ -47,7 +48,7 @@ def compile_structure(ast, base_path="", nest_level=0):
             required_docs.remove(doc_folder_path)
 
     if required_docs:
-        raise ParserError("required doc not used")
+        raise ParserError(f"required docs in {cwd} not used: {required_docs}")
 
     return {
         "variables": variables,

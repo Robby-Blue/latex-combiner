@@ -31,7 +31,6 @@ def rewrite_docs(documents):
     for document in documents:
         document_path = document["path"]
         nest = document["nest"]
-        print(nest)
         packages = rewrite_doc(document_path, nest)
 
         for package in packages:
