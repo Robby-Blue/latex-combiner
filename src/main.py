@@ -20,6 +20,8 @@ def rewrite_doc(doc_path, nest):
             os.path.getmtime(doc_path) > os.path.getmtime(output_file)):
         return packages
 
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+
     with open(output_file, "w") as f:
         f.write(output_src)
 
