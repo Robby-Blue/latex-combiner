@@ -8,6 +8,7 @@ def rewrite_document(src, nest):
     src, packages = find_and_remove_packages(src)
     src = fix_sections(src, nest)
     src = undefine_custom_commands(src)
+    src = find_and_remove_headers(src)
 
     return src, packages
 
@@ -29,6 +30,22 @@ def find_and_remove_packages(src):
         offset += offset_change
 
     return src, packages
+
+def find_and_remove_headers(src):
+    offset = 0
+
+    indexed_commands = find_indexed_commands(src, ["lhead", "rhead"])
+    for index, _ in indexed_commands:
+        index += offset
+        next_command_start = src.index("\\", src.index("\n", index+1))
+
+        command_length = next_command_start - index
+        src, offset_change = replace_text("",
+                index, command_length, src)
+
+        offset += offset_change
+
+    return src
 
 def undefine_custom_commands(src):
     indexed_commands = find_indexed_commands(src, ["newcommand"])
