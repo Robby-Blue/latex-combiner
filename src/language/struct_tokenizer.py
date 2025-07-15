@@ -1,7 +1,9 @@
 keywords = [
     "SET",
     "TITLE",
+    "SUBTITLE",
     "AUTHOR",
+    "EXPLANATION",
     "DATE",
     "TOC",
     "USE",

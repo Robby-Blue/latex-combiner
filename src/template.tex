@@ -2,22 +2,40 @@
 
 \$package_imports\$
 
+\newcommand{\makecustomtitlepage}{
+  \begin{titlepage}
+    \begin{center}
+      \vspace*{1cm}
+      {\$title\$ \par}
+      \vspace{0.2cm}
+      {\$subtitle\$ \par}
+      \vspace{2.3cm}
+      {\$author\$ \par}
+      \vspace{2.3cm}
+      {\$explanation\$}
+      \vspace{4cm}
+      \vfill
+      {\$date\$}
+    \end{center}
+  \end{titlepage}
+}
+
 \newcommand{\documentsection}[1]{
-    \section{#1}
+  \section{#1}
 }
 
 \newcommand{\documentsubsection}[1]{
-    \subsection{#1}
+  \subsection{#1}
 }
 
 \newcommand{\documentsubsubsection}[1]{
-    \vspace{0.1\baselineskip}
-    \subsubsection{#1}
+  \vspace{0.1\baselineskip}
+  \subsubsection{#1}
 }
 
 \newcommand{\documentsubsubsubsection}[1]{
-    \vspace{0.3\baselineskip}
-    \subsubsection*{#1}
+  \vspace{0.3\baselineskip}
+  \subsubsection*{#1}
 }
 
 \begin{document}
@@ -26,7 +44,7 @@
 \author{\$author\$}
 \date{\$date\$}
 
-\$maketitle\$
+\$makecustomtitlepage\$
 \$toc\$
 \$contents\$
 

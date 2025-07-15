@@ -53,12 +53,14 @@ def rewrite_main(packages, variables):
         src = f.read()
 
     src = src.replace("\\$title\\$", variables.get("TITLE", ""))
+    src = src.replace("\\$subtitle\\$", variables.get("SUBTITLE", ""))
     src = src.replace("\\$author\\$", variables.get("AUTHOR", ""))
+    src = src.replace("\\$explanation\\$", variables.get("EXPLANATION", ""))
     src = src.replace("\\$date\\$", variables.get("DATE", ""))
-
+    
     has_title = bool(variables.get("TITLE", ""))
-    startpage_code = "\\maketitle" if has_title else ""
-    src = src.replace("\\$maketitle\\$", startpage_code)
+    startpage_code = "\\makecustomtitlepage" if has_title else ""
+    src = src.replace("\\$makecustomtitlepage\\$", startpage_code)
 
     has_toc = variables.get("TOC", "false") == "true"
     startpage_code = "\\tableofcontents" if has_toc else ""
