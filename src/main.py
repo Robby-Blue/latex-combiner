@@ -66,7 +66,11 @@ def rewrite_main(packages, variables):
     src = src.replace("\\$makecustomtitlepage\\$", startpage_code)
 
     has_toc = variables.get("TOC", "false") == "true"
-    startpage_code = "\\tableofcontents" if has_toc else ""
+    startpage_code = """
+\\begingroup
+  \\hypersetup{hidelinks}
+  \\tableofcontents
+\\endgroup """ if has_toc else ""
     src = src.replace("\\$toc\\$", startpage_code)
 
     package_imports = ""
