@@ -45,6 +45,9 @@ def rewrite_docs(documents):
             else:
                 total_packages[name] = line
 
+    if "babel" not in total_packages:
+        total_packages["babel"] = "\\usepackage[ngerman]{babel}"
+
     return total_packages
 
 def rewrite_main(packages, variables):
