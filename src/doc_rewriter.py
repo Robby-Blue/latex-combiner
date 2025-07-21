@@ -1,7 +1,8 @@
 def rewrite_document(src, nest):
     # makes it not put equations into the page numbers
     # without breaking wrapfig
-    src = src.replace("\\[", "\\vspace{0pt}\\[")
+    src = src.replace(" \\[", " \\vspace{0pt}\\[")
+    src = src.replace("\n\\[", "\n\\vspace{0pt}\\[")
 
     src = remove_commands(src, [r"\documentclass{article}",
         r"\begin{document}", r"\end{document}"])
