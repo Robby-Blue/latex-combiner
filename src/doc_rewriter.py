@@ -10,6 +10,7 @@ def rewrite_document(src, nest):
     src = fix_sections(src, nest)
     src = undefine_custom_commands(src)
     src = find_and_remove_headers(src)
+    src = fix_tikz(src)
 
     return src, packages
 
@@ -47,6 +48,16 @@ def find_and_remove_headers(src):
         offset += offset_change
 
     return src
+
+def fix_tikz(src):
+    lines = src.split("\n")
+    for i in range(len(lines)):
+        if not lines[i].strip().startswith("\\end{minipage}"):
+            continue
+        if not lines[i+1].strip().startswith("\\hfill"):
+            continue
+        lines[i] = lines[i].rstrip()+"%"
+    return "\n".join(lines)
 
 def undefine_custom_commands(src):
     indexed_commands = find_indexed_commands(src, ["newcommand"])
