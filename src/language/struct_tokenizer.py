@@ -9,7 +9,8 @@ keywords = [
     "USE",
     "SECTION",
     "INCLUDE",
-    "STRICT"
+    "STRICT",
+    "FILL",
 ]
 
 def tokenize_structure(src):
