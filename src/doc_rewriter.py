@@ -87,7 +87,8 @@ def fix_sections(src, nest):
     
     relevant_commands = [
         "section",
-        "subsection"
+        "subsection",
+        "subsubsection"
     ]
 
     offset = 0
@@ -121,10 +122,7 @@ def replace_text(new_text, start_index, length, src):
     return src, len(new_text) - length
 
 def get_replacement_command(command, nest):
-    if command in ["section", "section*"]:
-        level = 0
-    if command in ["subsection", "subsection*"]:
-        level = 1
+    level = command.count("sub")
     level += nest
     return "document"+"sub"*level+"section"
 
