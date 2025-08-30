@@ -89,7 +89,7 @@ def rewrite_main(packages, variables):
             text = node["text"]
             if nest <= last_nest:
                 contents += "\\newpage\n"
-            contents += "\\"+section_type+"{"+text+"}\n"
+            contents += "\\document"+section_type+"{"+text+"}\n"
             last_nest = nest
         if node["type"] == "doc":
             hash = hash_path(node["path"])
