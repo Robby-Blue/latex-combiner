@@ -91,5 +91,8 @@ def get_docs_in_folder(cwd):
     paths = set()
     for name in os.listdir(cwd):
         doc_path = os.path.join(cwd, name)
+        main_tex_path = os.path.join(doc_path, "main.tex")
+        if not os.path.exists(main_tex_path):
+            continue
         paths.add(doc_path)
     return paths
