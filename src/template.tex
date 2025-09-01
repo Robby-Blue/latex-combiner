@@ -29,7 +29,6 @@
 }
 
 \newcommand{\documentsubsubsection}[1]{
-  \vspace{0.1\baselineskip}
   \subsubsection{#1 \label{#1}}
 }
 
@@ -38,7 +37,9 @@
 }
 
 \newcommand{\documentsubsubsubsubsection}[1]{
-  \subsubsection*{#1}
+  \vspace*{1\baselineskip} \par
+  \noindent \textbf{\small #1} \par\vspace{-\parskip}
+  \vspace{0.5\baselineskip}
 }
 
 \emergencystretch=3em
