@@ -47,6 +47,8 @@ def rewrite_docs(documents):
 
     if "babel" not in total_packages:
         total_packages["babel"] = "\\usepackage[ngerman]{babel}"
+    if "hyperref" not in total_packages:
+        total_packages["hyperref"] = "\\usepackage{hyperref}"
 
     return total_packages
 

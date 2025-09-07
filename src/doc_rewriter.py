@@ -4,13 +4,13 @@ def rewrite_document(src, nest):
     src = src.replace(" \\[", " \\vspace{0pt}\\[")
     src = src.replace("\n\\[", "\n\\vspace{0pt}\\[")
 
-    src = remove_commands(src, [r"\documentclass{article}",
-        r"\begin{document}", r"\end{document}"])
     src, packages = find_and_remove_packages(src)
     src = fix_sections(src, nest)
     src = undefine_custom_commands(src)
     src = find_and_remove_headers(src)
     src = fix_tikz(src)
+    src = remove_commands(src, [r"\documentclass{article}",
+        r"\begin{document}", r"\end{document}"])
 
     return src, packages
 
