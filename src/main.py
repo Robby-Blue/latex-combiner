@@ -72,7 +72,8 @@ def rewrite_main(packages, variables):
 \\begingroup
   \\hypersetup{hidelinks}
   \\tableofcontents
-\\endgroup """ if has_toc else ""
+\\endgroup
+\\newpage""" if has_toc else ""
     src = src.replace("\\$toc\\$", startpage_code)
 
     package_imports = ""
@@ -81,7 +82,7 @@ def rewrite_main(packages, variables):
 
     src = src.replace("\\$package_imports\\$", package_imports)
 
-    last_nest = 0
+    last_nest = -1
     contents = ""
     section_types = ["section", "subsection", "subsubsection"]
     for node in structure:
