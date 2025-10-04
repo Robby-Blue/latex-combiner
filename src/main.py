@@ -63,6 +63,13 @@ def rewrite_main(packages, variables):
     src = src.replace("\\$explanation\\$", variables.get("EXPLANATION", ""))
     src = src.replace("\\$date\\$", variables.get("DATE", ""))
     
+    if "REPO_FOLDER" in variables:
+        repo_folder = variables.get("REPO_FOLDER")
+        commit_hash = get_commit_hash(repo_folder)
+
+        src = src.replace("\\$commit_hash\\$", commit_hash)
+        src = src.replace("\\$commit\\$", variables.get("COMMIT", ""))
+    
     has_title = bool(variables.get("TITLE", ""))
     startpage_code = "\\makecustomtitlepage" if has_title else ""
     src = src.replace("\\$makecustomtitlepage\\$", startpage_code)
@@ -102,6 +109,18 @@ def rewrite_main(packages, variables):
 
     with open("output/main.tex", "w") as f:
         f.write(src)
+
+def get_commit_hash(repo_folder):
+    git_folder = os.path.join(repo_folder, ".git")
+    head_file = os.path.join(git_folder, "HEAD")
+
+    with open(head_file, "r") as f:
+        ref = f.read().split()[1]
+    
+    ref_file = os.path.join(git_folder, ref)
+    
+    with open(ref_file, "r") as f:
+        return f.read()[:7]
 
 def hash_path(path):
     return hashlib.md5(path.encode("UTF8")).hexdigest()

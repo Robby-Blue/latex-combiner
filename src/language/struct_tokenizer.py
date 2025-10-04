@@ -5,6 +5,8 @@ keywords = [
     "AUTHOR",
     "EXPLANATION",
     "DATE",
+    "COMMIT",
+    "REPO_FOLDER",
     "TOC",
     "USE",
     "SECTION",

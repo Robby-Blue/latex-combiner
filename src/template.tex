@@ -2,6 +2,8 @@
 
 \$package_imports\$
 
+\newcommand{\commit}{\$commit_hash\$}
+
 \newcommand{\makecustomtitlepage}{
   \begin{titlepage}
     \begin{center}
@@ -15,8 +17,8 @@
       {\$explanation\$ \par}
       \vspace{4cm}
       \vfill
-      {\$date\$}
     \end{center}
+    \$date\$ \hfill \$commit\$
   \end{titlepage}
 }
 
