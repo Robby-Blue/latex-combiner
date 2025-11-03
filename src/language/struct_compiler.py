@@ -44,7 +44,7 @@ def compile_section(ast, base_path, nest_level):
             required_docs.append({
                 "cwd": cwd,
                 "fill_type": fill_type,
-                "paths": get_docs_in_folder(cwd)
+                "paths": get_in_folder(cwd, is_doc=True)
             })
         elif statement_type == "section_statement":
             structure.append({
@@ -82,17 +82,46 @@ def compile_section(ast, base_path, nest_level):
                     "path": doc_path,
                     "nest": nest_level
                 })
+            required_folders = get_required_folders(cwd, ast)
+            for folder in required_folders:
+                structure.append({
+                    "type": "section",
+                    "text": folder,
+                    "nest": nest_level
+                })
+            
+                synth_ast = [{
+                    "type": "use_statement",
+                    "path": folder,
+                    "fill_type": "FILL"
+                }]
+                structure += compile_section(synth_ast, cwd, nest_level+1)
         else:
             raise ParserError(f"bad fill type")
         
     return structure
 
-def get_docs_in_folder(cwd):
+def get_in_folder(cwd, is_doc):
     paths = set()
     for name in os.listdir(cwd):
         doc_path = os.path.join(cwd, name)
         main_tex_path = os.path.join(doc_path, "main.tex")
-        if not os.path.exists(main_tex_path):
+        if os.path.exists(main_tex_path) != is_doc:
             continue
         paths.add(doc_path)
+    return paths
+
+def find_in_ast(type, ast):
+    return [item for item in ast if item["type"] == type]
+
+def get_required_folders(cwd, ast):
+    paths = get_in_folder(cwd, is_doc=False)
+    paths = [path.removeprefix(cwd+"/") for path in paths]
+    
+    for section in find_in_ast("section_statement", ast):
+        for folder in find_in_ast("use_statement", section["contents"]):
+            path = folder["path"]
+            if path in paths:
+                paths.remove(path)
+    
     return paths
