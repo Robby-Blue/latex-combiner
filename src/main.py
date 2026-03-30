@@ -14,45 +14,51 @@ def rewrite_doc(doc_path, nest):
         src = f.read()
 
     # if this becomes too slow make a package cache to read from
-    output_src, packages = doc_rewriter.rewrite_document(src, nest)
+    output_src, latex_packages, tblr_packages = doc_rewriter.rewrite_document(src, nest)
 
     if (os.path.exists(output_file) and
             os.path.getmtime(doc_path) > os.path.getmtime(output_file)):
-        return packages
+        return latex_packages, tblr_packages
 
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
     with open(output_file, "w") as f:
         f.write(output_src)
 
-    return packages
+    return latex_packages, tblr_packages
 
 def rewrite_docs(documents):
-    total_packages = {}
+    total_latex_packages = {}
+    total_tblr_packages = {}
 
     for document in documents:
         document_path = document["path"]
         nest = document["nest"]
-        packages = rewrite_doc(document_path, nest)
+        latex_packages, tblr_packages = rewrite_doc(document_path, nest)
 
-        for package in packages:
-            name = package["name"]
-            line = package["line"]
-            if name in total_packages:
-                if line != total_packages[name]:
-                    print(f"bad package {name}")
-                    exit(1)
-            else:
-                total_packages[name] = line
+        total_latex_packages = add_packages(total_latex_packages, latex_packages)
+        total_tblr_packages = add_packages(total_tblr_packages, tblr_packages)
 
-    if "babel" not in total_packages:
-        total_packages["babel"] = "\\usepackage[ngerman]{babel}"
-    if "hyperref" not in total_packages:
-        total_packages["hyperref"] = "\\usepackage{hyperref}"
+    if "babel" not in total_latex_packages:
+        total_latex_packages["babel"] = "\\usepackage[ngerman]{babel}"
+    if "hyperref" not in total_latex_packages:
+        total_latex_packages["hyperref"] = "\\usepackage{hyperref}"
 
-    return total_packages
+    return total_latex_packages, total_tblr_packages
 
-def rewrite_main(packages, variables):
+def add_packages(all_packages, packages):
+    for package in packages:
+        name = package["name"]
+        line = package["line"]
+        if name in all_packages:
+            if line != all_packages[name]:
+                print(f"bad package {name}")
+                exit(1)
+        else:
+            all_packages[name] = line
+    return all_packages
+
+def rewrite_main(latex_packages, tblr_packages, variables):
     dir = os.path.dirname(__file__)
     with open(os.path.join(dir, "template.tex")) as f:
         src = f.read()
@@ -84,7 +90,9 @@ def rewrite_main(packages, variables):
     src = src.replace("\\$toc\\$", startpage_code)
 
     package_imports = ""
-    for package_line in packages.values():
+    for package_line in latex_packages.values():
+        package_imports += f"{package_line}\n"
+    for package_line in tblr_packages.values():
         package_imports += f"{package_line}\n"
 
     src = src.replace("\\$package_imports\\$", package_imports)
@@ -133,5 +141,5 @@ variables = res["variables"]
 
 documents = [node for node in structure if node["type"] == "doc"]
 
-packages = rewrite_docs(documents)
-rewrite_main(packages, variables)
+latex_packages, tblr_packages = rewrite_docs(documents)
+rewrite_main(latex_packages, tblr_packages, variables)

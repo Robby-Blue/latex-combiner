@@ -4,7 +4,8 @@ def rewrite_document(src, nest):
     src = src.replace(" \\[", " \\vspace{0pt}\\[")
     src = src.replace("\n\\[", "\n\\vspace{0pt}\\[")
 
-    src, packages = find_and_remove_packages(src)
+    src, latex_packages = find_and_remove_latex_packages(src)
+    src, tblr_packages = find_and_remove_tblr_packages(src)
     src = fix_sections(src, nest)
     src = undefine_custom_commands(src)
     src = find_and_remove_headers(src)
@@ -12,13 +13,19 @@ def rewrite_document(src, nest):
     src = remove_commands(src, [r"\documentclass{article}",
         r"\begin{document}", r"\end{document}"])
 
-    return src, packages
+    return src, latex_packages, tblr_packages
 
-def find_and_remove_packages(src):
+def find_and_remove_latex_packages(src):
+    return find_and_remove_command(src, "usepackage")
+
+def find_and_remove_tblr_packages(src):
+    return find_and_remove_command(src, "UseTblrLibrary")
+    
+def find_and_remove_command(src, command):
     packages = []
     offset = 0
 
-    indexed_commands = find_indexed_commands(src, ["usepackage"])
+    indexed_commands = find_indexed_commands(src, [command])
     for index, _ in indexed_commands:
         index += offset
         next_command_start = src.index("\\", index+1)
